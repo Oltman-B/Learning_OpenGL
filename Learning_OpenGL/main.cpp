@@ -7,26 +7,21 @@
 const char *vertexShaderSrce =
 "#version 330 core\n"
 "layout(location = 0) in vec3 aPos;\n"
+"out vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
-"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"gl_Position = vec4(aPos, 1.0);\n"
+"vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
 "}\0";
 
 // Source code for fragment shader in GLSL
 const char *fragShaderSrce =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
+"in vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
-"FragColor = vec4(0.2f, 0.5f, 1.0f, 1.0f);\n"
-"}\n";
-
-const char *fragShaderSrce2 =
-"#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"FragColor = vec4(1.0f, 1.0f, 0.2f, 1.0f);\n"
+"FragColor = vertexColor;\n"
 "}\n";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -100,43 +95,15 @@ int main()
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
-	// Compile second fragment shader		
-	unsigned int fragmentShaderID2 = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaderID2, 1, &fragShaderSrce2, NULL);
-	glCompileShader(fragmentShaderID2);
-
-	glGetShaderiv(fragmentShaderID2, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShaderID, sizeof(infoLog), NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT2::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-
-
 	// Create and link the shader program
 	unsigned int shaderProgramID = glCreateProgram();
 	glAttachShader(shaderProgramID, vertexShaderID);
 	glAttachShader(shaderProgramID, fragmentShaderID);
 	glLinkProgram(shaderProgramID); // Link the shaders together, this is where input and output errors will be found
 
-	// Create and link the second shader program
-	unsigned int shaderProgramID2 = glCreateProgram();
-	glAttachShader(shaderProgramID2, vertexShaderID);
-	glAttachShader(shaderProgramID2, fragmentShaderID2);
-	glLinkProgram(shaderProgramID2); // Link the shaders together, this is where input and output errors will be found
-
-	glGetProgramiv(shaderProgramID2, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(shaderProgramID2, sizeof(infoLog), NULL, infoLog);
-		std::cout << "ERROR::SHADERPROGRAM2::LINKING_FAILED\n" << infoLog << std::endl;
-	}
-
 	// No longer need shader objects once linked into the program.
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
-	glDeleteShader(fragmentShaderID2);
 
 	//*******************END SHADER SETUP CODE******************************
 
@@ -151,19 +118,6 @@ int main()
 		0, 1, 3,
 		3, 2, 1
 	};
-
-	float vertices2[] = {
-	 0.0f,  0.1f, 0.0f,
-	 0.0f, -0.3f, 0.0f,
-	 0.3f,  0.3f, 0.0f,
-	 0.3f, -0.3f, 0.0f
-	};
-
-	unsigned int indices2[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
-
 
 	// Create element buffer object for the index buffer
 	unsigned int EBO[2], VBO[2], VAO[2];
@@ -198,28 +152,6 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	//glBindVertexArray(0); Don't need to unbind because it is rebound with a different VAO in a few lines.
 
-	//**************SETUP TRIANGLE 2**************************
-
-	glBindVertexArray(VAO[1]);
-
-	// Bind the VBO buffer to a GL_ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-	// Copy the vertex array into the VBObuffer with a static draw memory access hint to graphics card.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-
-	// Set up the index array
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
-
-	// Tell OpenGL how to interpret the vertex data (where & how to get the buffer's vertex data for the shader attribute.)
-	//First parameter is the layout (location = 0) of position attribute set in shader
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-	// Layout location 0 set in shader 
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	//*******************END OPENGL INITIALIZATION CODE*************************
 
@@ -243,13 +175,6 @@ int main()
 		glBindVertexArray(VAO[0]);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		// Switch to second, yellow, shader program
-		glUseProgram(shaderProgramID2);
-
-		glBindVertexArray(VAO[1]);
-
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);
 		//glDrawArrays(GL_TRIANGLES, 0, 6)

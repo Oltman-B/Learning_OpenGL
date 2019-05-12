@@ -22,32 +22,32 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{439E2CEC-0004-4849-93B5-D49D6D038DCD}</ProjectGuid>
     <RootNamespace>LearningOpenGL</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -70,19 +70,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64\include;F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Learning\Learning_OpenGL\include;F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64;$(IncludePath)</IncludePath>
     <LibraryPath>F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64\include;F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Learning\Learning_OpenGL\include;F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64;$(IncludePath)</IncludePath>
     <LibraryPath>F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64\include;F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Learning\Learning_OpenGL\include;F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64;$(IncludePath)</IncludePath>
     <LibraryPath>F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64\include;F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Learning\Learning_OpenGL\include;F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64;$(IncludePath)</IncludePath>
     <LibraryPath>F:\Learning\Learning_OpenGL\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
