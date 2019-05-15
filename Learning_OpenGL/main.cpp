@@ -1,25 +1,17 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "Shader.h"
 
-
-// Source code for vertex shader test. glPosition is defined by OpenGL behind the scenes
-const char *vertexShaderSrce =
-"#version 330 core\n"
-"layout(location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"gl_Position = vec4(aPos, 1.0);\n"
-"}\0";
 
 // Source code for fragment shader in GLSL
 const char *fragShaderSrce =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
-"uniform vec4 ourColor;\n"
+"in vec3 ourColor;\n"
 "void main()\n"
 "{\n"
-"FragColor = ourColor;\n"
+"FragColor = vec4(ourColor, 1.0);\n"
 "}\n";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -65,51 +57,14 @@ int main()
 	//********************OPENGL INITIALIZATION CODE************************
 
 	// *********************START SHADER SETUP CODE***************************
-	// Create shader object and compile vertex shader // Create a vertex shader and store the id
-	unsigned int vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-
-	glShaderSource(vertexShaderID, 1, &vertexShaderSrce, NULL);
-	glCompileShader(vertexShaderID);
-
-	// Check that shader compiled
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShaderID, sizeof(infoLog), NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// Create fragment shader object and compile
-	unsigned int fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaderID, 1, &fragShaderSrce, NULL);
-	glCompileShader(fragmentShaderID);
-
-	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShaderID, sizeof(infoLog), NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// Create and link the shader program
-	unsigned int shaderProgramID = glCreateProgram();
-	glAttachShader(shaderProgramID, vertexShaderID);
-	glAttachShader(shaderProgramID, fragmentShaderID);
-	glLinkProgram(shaderProgramID); // Link the shaders together, this is where input and output errors will be found
-
-	// No longer need shader objects once linked into the program.
-	glDeleteShader(vertexShaderID);
-	glDeleteShader(fragmentShaderID);
-
+	Shader ourShader("shader.vert", "shader.frag");
 	//*******************END SHADER SETUP CODE******************************
 
 	float vertices1[] = {
-	  0.0f,  0.5f, 0.0f,
-	  0.5f,  -0.5f, 0.0f,
-	 -0.5f,  0.0f, 0.0f,
-	 -0.5f, -0.5f, 0.0f
+	  0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	  0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+	 -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+	 -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
 	};
 
 	unsigned int indices1[] = {
@@ -142,9 +97,12 @@ int main()
 
 	// Tell OpenGL how to interpret the vertex data (where & how to get the buffer's vertex data for the shader attribute.)
 	//First parameter is the layout (location = 0) of position attribute set in shader
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-	// Layout location 0 set in shader 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
+
+	//color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	//glBindVertexArray(0); Don't need to unbind because it is rebound with a different VAO in a few lines.
@@ -165,14 +123,7 @@ int main()
 		// Set which buffer to clear
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Set shaderProgram as active shaderprogram
-		glUseProgram(shaderProgramID);
-
-		//Update uniform color
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgramID, "ourColor");
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		ourShader.use();		
 
 		// Bind the vertext array object, only need to bind each iteration if it changes.
 		glBindVertexArray(VAO[0]);
