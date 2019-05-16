@@ -63,6 +63,8 @@ int main()
 	// load and generate the texture
 	int width, height, nrChannels;
 
+
+	stbi_set_flip_vertically_on_load(true); // Flip y axis of image before loading because images set 0 to top left corner, opengl expects 0 to be bottom left.
 	unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
