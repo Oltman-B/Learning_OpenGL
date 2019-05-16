@@ -49,14 +49,17 @@ int main()
 	//********************OPENGL INITIALIZATION CODE************************
 
 	//***********************LOAD TEXTURE IMAGE*******************************
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	unsigned int texture[2];
+	glGenTextures(2, texture);
+
+	// Set up first texture image
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	// load and generate the texture
 	int width, height, nrChannels;
 
@@ -68,7 +71,26 @@ int main()
 	}
 	else
 	{
-		std::cout << "Failed to load texture" << std::endl;
+		std::cout << "Failed to load texture 1" << std::endl;
+	}
+
+	// Set up second texture image
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture 2" << std::endl;
 	}
 	stbi_image_free(data);
 
@@ -129,6 +151,13 @@ int main()
 	//glBindVertexArray(0); Don't need to unbind because it is rebound with a different VAO in a few lines.
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	//Set up texture uniforms
+	ourShader.use(); // activate shader before setting uniforms!
+	ourShader.setInt("texture1", 0);  // Texture 1 will be stored in uniform 0
+	ourShader.setInt("texture2", 1); // Texture 2 will be stored in uniform 1
+
+
 	//*******************END OPENGL INITIALIZATION CODE*************************
 
 	// 'Game loop'
@@ -144,13 +173,13 @@ int main()
 		// Set which buffer to clear
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		ourShader.use();
-
 		//Bind texture
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture[0]);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture[1]);
 		// Bind the vertext array object, only need to bind each iteration if it changes.
 		glBindVertexArray(VAO[0]);
-
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);
