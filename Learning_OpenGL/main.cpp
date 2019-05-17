@@ -3,8 +3,12 @@
 #include "stb_image.h"
 #include <iostream>
 #include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
 
+float ourAlphaBlend = 0.2f;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -15,6 +19,10 @@ void ProcessInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		ourAlphaBlend -= 0.01;
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		ourAlphaBlend += 0.01;
 }
 
 int main()
@@ -109,7 +117,7 @@ int main()
 	};
 
 	unsigned int indices1[] = {
-		0, 1, 2, 2, 3, 0
+		0, 1, 3, 1, 2, 3
 	};
 
 	// Create element buffer object for the index buffer
@@ -117,12 +125,12 @@ int main()
 
 	// Create a Vertex Array Object to store the state of VertexArrayAttributes and the VBO associated with the array attributes
 	// Makes drawing new objects easy because the attributes need to be set up only once for each vertex configuration.
-	glGenVertexArrays(2, VAO);
+	glGenVertexArrays(1, VAO);
 
 	// Instantiate a buffer and store its iD in VBO
-	glGenBuffers(2, VBO);
+	glGenBuffers(1, VBO);
 	// Create element buffer object
-	glGenBuffers(2, EBO);
+	glGenBuffers(1, EBO);
 
 	// Bind the vertex array object first, then bind and setup the vertex buffers and vertex attributes
 	glBindVertexArray(VAO[0]);
@@ -159,7 +167,11 @@ int main()
 	ourShader.setInt("texture1", 0);  // Texture 1 will be stored in uniform 0
 	ourShader.setInt("texture2", 1); // Texture 2 will be stored in uniform 1
 
-
+	//Bind textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
 	//*******************END OPENGL INITIALIZATION CODE*************************
 
 	// 'Game loop'
@@ -169,17 +181,12 @@ int main()
 		ProcessInput(window);
 
 		//*********************Start Rendering Code***********************
-
+		ourShader.setFloat("alphaBlend", ourAlphaBlend); 
 		// Clear buffer to some color between renders
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		// Set which buffer to clear
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//Bind texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture[0]);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture[1]);
 		// Bind the vertext array object, only need to bind each iteration if it changes.
 		glBindVertexArray(VAO[0]);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
