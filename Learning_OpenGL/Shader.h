@@ -2,6 +2,7 @@
 #define SHADER_H
 
 #include <glad/glad.h> // for opengl headers
+#include <glm/gtc/matrix_transform.hpp>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -106,6 +107,11 @@ public:
 	void setFloat(const std::string& name, float value) const
 	{
 		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+	}
+	void setMat4(const std::string& name, bool transposeFlag, glm::mat4 value) const
+	{	
+		// set uniform 4x4 matrix, check for transpose flag
+		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, transposeFlag ? GL_TRUE : GL_FALSE, glm::value_ptr(value));
 	}
 };
 

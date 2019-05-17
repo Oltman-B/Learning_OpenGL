@@ -172,6 +172,13 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture[1]);
+
+	// Prepare transformation matrix
+	glm::mat4 trans = glm::mat4(1.0f); // create an identity matrix 4 x 4
+	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0)); // multiply trans matrix by a 90 degree z-axis rotation matrix
+	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5)); // multiply trans matrix by a 0.5 scale matrix.
+	/* Now trans will scale by 0.5 and then rotate by 90 deg around Z*/
+
 	//*******************END OPENGL INITIALIZATION CODE*************************
 
 	// 'Game loop'
@@ -181,6 +188,10 @@ int main()
 		ProcessInput(window);
 
 		//*********************Start Rendering Code***********************
+
+		//Transformation test
+		ourShader.setMat4("transform", false, trans);
+
 		ourShader.setFloat("alphaBlend", ourAlphaBlend); 
 		// Clear buffer to some color between renders
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
