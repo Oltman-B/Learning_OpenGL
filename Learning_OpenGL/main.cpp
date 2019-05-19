@@ -8,6 +8,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
 
+#define SCR_WIDTH 800
+#define SCR_HEIGHT 600
+
 float ourAlphaBlend = 0.2f;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -32,7 +35,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGlTest", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGlTest", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -48,7 +51,7 @@ int main()
 		return -1;
 	}
 
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -70,8 +73,6 @@ int main()
 
 	// load and generate the texture
 	int width, height, nrChannels;
-	int SCR_WIDTH = 800;
-	int SCR_HEIGHT = 600;
 
 	stbi_set_flip_vertically_on_load(true); // Flip y axis of image before loading because images set 0 to top left corner, opengl expects 0 to be bottom left.
 	unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
