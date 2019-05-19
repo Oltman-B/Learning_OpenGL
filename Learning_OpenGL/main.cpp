@@ -69,14 +69,15 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// load and generate the texture
-	int SCR_WIDTH, SCR_HEIGHT, nrChannels;
-
+	int width, height, nrChannels;
+	int SCR_WIDTH = 800;
+	int SCR_HEIGHT = 600;
 
 	stbi_set_flip_vertically_on_load(true); // Flip y axis of image before loading because images set 0 to top left corner, opengl expects 0 to be bottom left.
-	unsigned char* data = stbi_load("container.jpg", &SCR_WIDTH, &SCR_HEIGHT, &nrChannels, 0);
+	unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -92,10 +93,10 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	data = stbi_load("awesomeface.png", &SCR_WIDTH, &SCR_HEIGHT, &nrChannels, 0);
+	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -151,6 +152,9 @@ int main()
 	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
+
+	//Enable depth-testing z-buffer
+	glEnable(GL_DEPTH_TEST);
 
 	// Create element buffer object for the index buffer
 	unsigned int VBO, VAO;
@@ -209,11 +213,11 @@ int main()
 		// Clear buffer to some color between renders
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		// Set which buffer to clear
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Model matrix
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
 
 		//View matrix
 		glm::mat4 view = glm::mat4(1.0f);
