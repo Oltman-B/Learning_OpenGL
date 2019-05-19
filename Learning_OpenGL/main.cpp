@@ -183,25 +183,40 @@ int main()
 
 		//*********************Start Rendering Code***********************
 
-		//Transformation test
-		// Prepare transformation matrix
-		glm::mat4 trans = glm::mat4(1.0f); // create an identity matrix 4 x 4
-		//trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f)); // multiply trans matrix by a 90 degree z-axis rotation matrix
-		/* Now trans will scale by 0.5 and then rotate by 90 deg around Z*/
+		// Bind the vertext array object, only need to bind each iteration if it changes.
+		glBindVertexArray(VAO[0]);
 
-		ourShader.setMat4("transform", false, trans);
-
-		ourShader.setFloat("alphaBlend", ourAlphaBlend); 
 		// Clear buffer to some color between renders
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		// Set which buffer to clear
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Bind the vertext array object, only need to bind each iteration if it changes.
-		glBindVertexArray(VAO[0]);
+		//Transformation test
+		// Prepare transformation matrix
+		glm::mat4 trans = glm::mat4(1.0f); // create an identity matrix 4 x 4
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, (float)glfwGetTime()/10, glm::vec3(1.0f, 0.0f, 1.0f)); // multiply trans matrix by a 90 degree z-axis rotation matrix
+		/* Now trans will scale by 0.5 and then rotate by 90 deg around Z*/
+
+		// Set first box uniforms
+		ourShader.setMat4("transform", false, trans);
+		ourShader.setFloat("alphaBlend", ourAlphaBlend); 
+		
+		// Draw first box
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		/* set up trans and draw second box */
+		float scale = glm::sin((float)glfwGetTime() / 3);
+		trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+		trans = glm::scale(trans, glm::vec3(scale, scale, scale));
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));
+
+		// Set second box uniforms and draw
+		ourShader.setMat4("transform", false, trans);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // redraw triangles.
+
+	
 		glBindVertexArray(0);
 		//glDrawArrays(GL_TRIANGLES, 0, 6)
 
