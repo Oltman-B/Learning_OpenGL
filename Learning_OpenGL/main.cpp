@@ -94,10 +94,10 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
+	data = stbi_load("ron.jpg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -203,6 +203,19 @@ int main()
 
 	//*******************END OPENGL INITIALIZATION CODE*************************
 
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	// 'Game loop'
 	while (!glfwWindowShouldClose(window))
 	{
@@ -214,11 +227,7 @@ int main()
 		// Clear buffer to some color between renders
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		// Set which buffer to clear
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		//Model matrix
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
 
 		//View matrix
 		glm::mat4 view = glm::mat4(1.0f);
@@ -228,15 +237,25 @@ int main()
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
-		// Set first box uniforms
-		ourShader.setMat4("model", false, model);
+		// Set non-loop uniforms	
 		ourShader.setMat4("view", false, view);
 		ourShader.setMat4("projection", false, projection);
 		ourShader.setFloat("alphaBlend", ourAlphaBlend); 
 		
 		// Bind the vertext array object, only need to bind each iteration if it changes.
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (int i = 0; i < 10; i++)
+		{
+			//Model matrix draw 10 cubes, translate each one by cubPositions[i]
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i] * glm::sin(ourAlphaBlend));
+			float angle = 20.0f * i;
+			model = glm::rotate(model, (float)glfwGetTime() * (i + 1 * ourAlphaBlend), glm::vec3(0.5f, 1.0f, 0.0f));
+			ourShader.setMat4("model", false, model);
+
+			// Draw arrays
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 		//**************End Rendering Code********************************
 		glBindVertexArray(0);
