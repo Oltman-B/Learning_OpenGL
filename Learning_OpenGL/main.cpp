@@ -94,10 +94,10 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	data = stbi_load("ron.jpg", &width, &height, &nrChannels, 0);
+	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -231,7 +231,8 @@ int main()
 
 		//View matrix
 		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); // translate scene in reverse direction we want camera to move
+		view *= glm::rotate(view, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 8.0f, 0.0f)); // translate scene in reverse direction we want camera to move
 
 		//Projection matrix
 		glm::mat4 projection;
@@ -250,7 +251,7 @@ int main()
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i] * glm::sin(ourAlphaBlend));
 			float angle = 20.0f * i;
-			model = glm::rotate(model, (float)glfwGetTime() * (i + 1 * ourAlphaBlend), glm::vec3(0.5f, 1.0f, 0.0f));
+			model = glm::rotate(model, (float)glfwGetTime() * (i + 1 * ourAlphaBlend) * (i % 3), glm::vec3(0.5f, 1.0f, 0.0f));
 			ourShader.setMat4("model", false, model);
 
 			// Draw arrays
