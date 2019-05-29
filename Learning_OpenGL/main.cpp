@@ -216,6 +216,16 @@ int main()
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	//Camera Setup
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+
+	glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 cameraRight = glm::normalize(glm::cross(worldUp, cameraDirection));
+
+	glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight); // already normalized direction and right, no need to normalize cameraUp
+
 	// 'Game loop'
 	while (!glfwWindowShouldClose(window))
 	{
@@ -229,10 +239,16 @@ int main()
 		// Set which buffer to clear
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
 
-		//View matrix
-		glm::mat4 view = glm::mat4(1.0f);
-		view *= glm::rotate(view, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		view = glm::translate(view, glm::vec3(0.0f, 8.0f, 0.0f)); // translate scene in reverse direction we want camera to move
+		//Camera
+		float radius = 10.0f;
+		float camX = sin(glfwGetTime()) * radius;
+		float camY = cos(glfwGetTime()) * 2 * radius;
+
+		glm::mat4 view;
+		view = glm::lookAt(
+			glm::vec3(camX, 0.0f, camY),
+			glm::vec3(0.0f, 1.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
 
 		//Projection matrix
 		glm::mat4 projection;
