@@ -13,6 +13,15 @@
 
 float ourAlphaBlend = 0.2f;
 
+//**********************Camera Setup********************************
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 cameraRight = glm::normalize(glm::cross(cameraUp, cameraFront));
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -26,6 +35,17 @@ void ProcessInput(GLFWwindow *window)
 		ourAlphaBlend -= 0.01;
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		ourAlphaBlend += 0.01;
+
+	// Camera Controls
+	float cameraSpeed = 2.5f * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraRight;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraRight;
 }
 
 int main()
@@ -216,19 +236,12 @@ int main()
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	//Camera Setup
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-
-	glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 cameraRight = glm::normalize(glm::cross(worldUp, cameraDirection));
-
-	glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight); // already normalized direction and right, no need to normalize cameraUp
-
 	// 'Game loop'
 	while (!glfwWindowShouldClose(window))
 	{
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 		// Input
 		ProcessInput(window);
 
@@ -239,16 +252,9 @@ int main()
 		// Set which buffer to clear
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
 
-		//Camera
-		float radius = 10.0f;
-		float camX = sin(glfwGetTime()) * radius;
-		float camY = cos(glfwGetTime()) * 2 * radius;
-
+		// Camera control
 		glm::mat4 view;
-		view = glm::lookAt(
-			glm::vec3(camX, 0.0f, camY),
-			glm::vec3(0.0f, 1.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f));
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
 		//Projection matrix
 		glm::mat4 projection;
