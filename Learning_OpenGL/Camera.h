@@ -33,6 +33,8 @@ public:
 	glm::vec3 Up;
 	glm::vec3 Right;
 	glm::vec3 WorldUp;
+	glm::vec3 WalkDirection; // Used to walk in restricted plane, even if looking up or down
+
 	// Euler Angles
 	float Yaw;
 	float Pitch;
@@ -71,9 +73,9 @@ public:
 	{
 		float velocity = MovementSpeed * deltaTime;
 		if (direction == FORWARD)
-			Position += Front * velocity;
+			Position += WalkDirection * velocity;
 		if (direction == BACKWARD)
-			Position -= Front * velocity;
+			Position -= WalkDirection * velocity;
 		if (direction == LEFT)
 			Position -= Right * velocity;
 		if (direction == RIGHT)
@@ -125,7 +127,12 @@ private:
 		Front = glm::normalize(front);
 		// Also re-calculate the Right and Up vector
 		Right = glm::normalize(glm::cross(Front, WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-		Up = glm::normalize(glm::cross(Right, Front));
+		Up = glm::normalize(glm::cross(Right, Front)); 
+		
+		/*Calculate walk direction by projecting the y component of vector onto x/z plane
+		To do this, subtract the dot product of the plane normal and direction vector multiplied by the plane normal vec*/
+		WalkDirection = glm::normalize(Front - dot(Front, WorldUp) * WorldUp); // Restrict user to walking in x/z plane rather than flying.
+
 	}
 };
 #endif
