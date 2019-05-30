@@ -17,7 +17,6 @@ float ourAlphaBlend = 0.2f;
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 cameraRight = glm::normalize(glm::cross(cameraUp, cameraFront));
 
 bool firstMouse = true;
 float pitch = 0.0f;
@@ -95,9 +94,9 @@ void ProcessInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		cameraPos -= cameraSpeed * cameraFront;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraRight;
+		cameraPos += glm::normalize(glm::cross(cameraUp, cameraFront)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * cameraRight;
+		cameraPos -= glm::normalize(glm::cross(cameraUp, cameraFront)) * cameraSpeed;
 }
 
 int main()
