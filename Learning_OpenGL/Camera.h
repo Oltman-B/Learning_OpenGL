@@ -164,6 +164,7 @@ private:
 		/*Calculate walk direction by projecting the y component of vector onto x/z plane
 		To do this, subtract the dot product of the plane normal and direction vector multiplied by the plane normal vec*/
 		WalkDirection = glm::normalize(Front - dot(Front, WorldUp) * WorldUp); // Restrict user to walking in x/z plane rather than flying.
+		// dot product would cause problems (set direction to zero) when front is same direction as world up, but we can't get here because we constrain the pitch.
 
 	}
 };
