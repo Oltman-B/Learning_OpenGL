@@ -12,7 +12,8 @@ enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
 	LEFT,
-	RIGHT
+	RIGHT,
+	FLY
 };
 
 // Default camera values
@@ -42,6 +43,7 @@ public:
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Zoom;
+	bool Fly = false;
 
 	// Constructor with vectors
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
@@ -105,13 +107,22 @@ public:
 	{
 		float velocity = MovementSpeed * deltaTime;
 		if (direction == FORWARD)
-			Position += WalkDirection * velocity;
+			Position += (Fly ? Front : WalkDirection) * velocity; // enable flight if toggle set to true
 		if (direction == BACKWARD)
-			Position -= WalkDirection * velocity;
+			Position -= (Fly ? Front : WalkDirection) * velocity;
 		if (direction == LEFT)
 			Position -= Right * velocity;
 		if (direction == RIGHT)
 			Position += Right * velocity;
+		if (direction == FLY)
+		{
+			if (Fly == true)
+				Position.y = 0; // snap user to grid if flying
+			Fly = !Fly;
+		}
+	
+
+
 	}
 
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
